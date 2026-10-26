@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Warm, calm background gradient — Apple-like softness */
+.app-bg {
+  background:
+    radial-gradient(1200px 600px at 50% -10%, #ffffff 0%, rgba(255, 255, 255, 0) 60%),
+    linear-gradient(180deg, #fbf9f6 0%, #f3ede3 100%);
+}
+
+/* Frosted card */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.02),
+    0 12px 40px rgba(80, 60, 44, 0.1);
+}
+
+/* Native-feeling focus ring */
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(138, 109, 82, 0.25);
+}
+
+/* Hide scrollbar but keep scrolling (time-slot picker) */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---- Google Maps: match the calm, Apple-like palette ---- */
+.gm-style .gm-style-iw {
+  font-family: inherit;
+}
+/* Places arama açılır listesi */
+.pac-container {
+  border-radius: 14px;
+  margin-top: 6px;
+  border: 1px solid rgba(80, 60, 44, 0.12);
+  box-shadow: 0 12px 40px rgba(80, 60, 44, 0.16);
+  font-family: inherit;
+  overflow: hidden;
+}
+.pac-item {
+  padding: 6px 12px;
+  color: #503c2c;
+  cursor: pointer;
+}
+.pac-item:hover {
+  background: #f5f1ea;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
