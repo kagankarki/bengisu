@@ -40,7 +40,7 @@ export default function Greeting({ onDone }: { onDone: () => void }) {
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             exit={{ opacity: 0, y: -16, filter: "blur(6px)" }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-md text-balance text-4xl font-semibold tracking-tight text-espresso-800 sm:text-5xl"
+            className="max-w-md text-balance font-display text-[2.6rem] font-medium leading-[1.1] tracking-[-0.015em] text-espresso-800 sm:text-6xl"
           >
             {LINES[index]}
           </motion.h1>
@@ -52,7 +52,7 @@ export default function Greeting({ onDone }: { onDone: () => void }) {
         {LINES.map((_, i) => (
           <motion.span
             key={i}
-            className="h-1.5 rounded-full bg-espresso-500"
+            className="h-1.5 rounded-full bg-gradient-to-r from-espresso-500 to-espresso-700"
             animate={{
               width: i === index ? 22 : 6,
               opacity: i <= index ? 1 : 0.3,
@@ -72,7 +72,7 @@ export default function Greeting({ onDone }: { onDone: () => void }) {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             onClick={onDone}
-            className="focus-ring mt-12 rounded-full bg-espresso-700 px-8 py-3.5 text-base font-medium text-cream-50 shadow-lg shadow-espresso-700/20 transition-colors hover:bg-espresso-800"
+            className="btn-primary focus-ring mt-12 rounded-full px-9 py-3.5 text-base font-medium tracking-wide"
           >
             Devam et
           </motion.button>

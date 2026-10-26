@@ -73,7 +73,7 @@ export default function Question({ onYes }: { onYes: () => void }) {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="max-w-md text-balance text-3xl font-semibold tracking-tight text-espresso-800 sm:text-4xl"
+        className="max-w-md text-balance font-display text-[2.1rem] font-medium leading-[1.15] tracking-[-0.01em] text-espresso-800 sm:text-5xl"
       >
         Benimle bir kahve içmeye ne dersin?
       </motion.h2>
@@ -88,7 +88,7 @@ export default function Question({ onYes }: { onYes: () => void }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.35 }}
-              className="text-sm font-medium text-espresso-500"
+              className="font-display text-[0.95rem] italic text-espresso-500"
             >
               {message}
             </motion.p>
@@ -107,7 +107,7 @@ export default function Question({ onYes }: { onYes: () => void }) {
           whileHover={{ scale: yesScale * 1.04 }}
           whileTap={{ scale: yesScale * 0.96 }}
           transition={{ type: "spring", stiffness: 320, damping: 20 }}
-          className="focus-ring z-10 rounded-full bg-espresso-700 px-9 py-3.5 text-base font-semibold text-cream-50 shadow-lg shadow-espresso-700/25 hover:bg-espresso-800"
+          className="btn-primary focus-ring z-10 rounded-full px-10 py-3.5 text-base font-semibold tracking-wide"
         >
           Evet
         </motion.button>
@@ -127,7 +127,7 @@ export default function Question({ onYes }: { onYes: () => void }) {
             touchAction: "manipulation",
             pointerEvents: noScale <= 0.3 ? "none" : "auto",
           }}
-          className="focus-ring select-none rounded-full border border-espresso-200 bg-white/70 px-9 py-3.5 text-base font-medium text-espresso-600 backdrop-blur"
+          className="focus-ring select-none rounded-full border border-white/80 bg-white/60 px-9 py-3.5 text-base font-medium text-espresso-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_6px_18px_-6px_rgba(80,60,44,0.18)] backdrop-blur-xl"
         >
           Hayır
         </motion.button>

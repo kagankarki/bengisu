@@ -18,6 +18,7 @@ const config: Config = {
           "system-ui",
           "sans-serif",
         ],
+        display: ["var(--font-display)", "Georgia", "serif"],
       },
       colors: {
         cream: {

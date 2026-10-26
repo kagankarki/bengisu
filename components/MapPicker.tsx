@@ -149,7 +149,7 @@ export default function MapPicker({
 
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-espresso-600">
+      <label className="mb-2.5 block text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-espresso-500">
         Mekan
       </label>
 
@@ -182,7 +182,7 @@ export default function MapPicker({
       </p>
 
       {selectedName && (
-        <div className="mt-3 inline-flex max-w-full items-center gap-1.5 truncate rounded-full border border-espresso-700 bg-espresso-700 px-3.5 py-1.5 text-sm text-cream-50">
+        <div className="mt-3 inline-flex max-w-full items-center gap-1.5 truncate rounded-full border border-espresso-700 bg-gradient-to-b from-espresso-600 to-espresso-800 px-3.5 py-1.5 text-sm text-cream-50">
           <span aria-hidden>📍</span>
           <span className="truncate">{selectedName}</span>
         </div>

@@ -24,7 +24,7 @@ export default function TimePicker({
 
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-espresso-600">
+      <label className="mb-2.5 block text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-espresso-500">
         Saat
       </label>
       <div className="no-scrollbar -mx-1 flex snap-x snap-mandatory gap-2 overflow-x-auto px-1 py-1">
@@ -38,7 +38,7 @@ export default function TimePicker({
               className={[
                 "focus-ring shrink-0 snap-center rounded-2xl border px-4 py-2.5 text-sm tabular-nums transition",
                 active
-                  ? "border-espresso-700 bg-espresso-700 font-semibold text-cream-50 shadow-md shadow-espresso-700/25"
+                  ? "border-espresso-700 bg-gradient-to-b from-espresso-600 to-espresso-800 font-semibold text-cream-50 shadow-md shadow-espresso-700/25"
                   : "border-espresso-200 bg-white/80 text-espresso-700 hover:border-espresso-500",
               ].join(" ")}
             >

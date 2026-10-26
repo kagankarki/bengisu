@@ -48,7 +48,7 @@ export default function Scheduler({
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="text-3xl font-semibold tracking-tight text-espresso-800 sm:text-4xl"
+        className="font-display text-[2.4rem] font-medium leading-tight tracking-[-0.015em] text-espresso-800 sm:text-5xl"
       >
         Harika! 🎉
       </motion.h2>
@@ -61,16 +61,20 @@ export default function Scheduler({
         Ne zaman, saat kaçta ve nerede müsaitsin?
       </motion.p>
 
-      <div className="glass mt-9 w-full rounded-3xl p-6 text-left sm:p-7">
+      <div className="glass mt-9 w-full rounded-[1.75rem] p-6 text-left sm:p-8">
         <motion.div custom={0} variants={fieldRow} initial="hidden" animate="show">
           <DatePicker value={date} onChange={setDate} />
         </motion.div>
 
-        <motion.div custom={1} variants={fieldRow} initial="hidden" animate="show" className="mt-5">
+        <div className="hairline my-6" />
+
+        <motion.div custom={1} variants={fieldRow} initial="hidden" animate="show">
           <TimePicker value={time} onChange={setTime} />
         </motion.div>
 
-        <motion.div custom={2} variants={fieldRow} initial="hidden" animate="show" className="mt-5">
+        <div className="hairline my-6" />
+
+        <motion.div custom={2} variants={fieldRow} initial="hidden" animate="show">
           <MapPicker onSelect={setPlace} />
         </motion.div>
       </div>
@@ -83,7 +87,7 @@ export default function Scheduler({
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4, duration: 0.5 }}
-        className="focus-ring mt-8 w-full rounded-full bg-espresso-700 px-8 py-4 text-base font-semibold text-cream-50 shadow-lg shadow-espresso-700/25 transition hover:bg-espresso-800 disabled:cursor-not-allowed disabled:opacity-40"
+        className="btn-primary focus-ring mt-8 w-full rounded-full px-8 py-4 text-base font-semibold tracking-wide disabled:cursor-not-allowed disabled:opacity-40"
       >
         {submitting ? "Gönderiliyor…" : "Planı gönder"}
       </motion.button>

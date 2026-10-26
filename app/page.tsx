@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Greeting from "@/components/Greeting";
 import Question from "@/components/Question";
@@ -19,6 +19,12 @@ const stepVariants = {
 export default function Home() {
   const [step, setStep] = useState<Step>("greeting");
   const [plan, setPlan] = useState<DatePlan | null>(null);
+
+  // Each step starts at the top — otherwise after submitting the (tall)
+  // scheduler on a phone you'd land below the short thank-you card.
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [step]);
 
   return (
     <main className="relative mx-auto flex min-h-dvh w-full max-w-xl flex-col items-center [justify-content:safe_center] px-5 py-12">

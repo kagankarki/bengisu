@@ -80,7 +80,7 @@ export default function DatePicker({
 
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-espresso-600">
+      <label className="mb-2.5 block text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-espresso-500">
         Tarih
       </label>
       <div className="rounded-2xl border border-espresso-200 bg-white/80 p-3">
@@ -102,7 +102,7 @@ export default function DatePicker({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
                 transition={{ duration: 0.25 }}
-                className="block text-sm font-semibold text-espresso-800"
+                className="block font-display text-[1.05rem] font-medium text-espresso-800"
               >
                 {MONTHS[view.m]} {view.y}
               </motion.span>
@@ -161,7 +161,7 @@ export default function DatePicker({
                   className={[
                     "focus-ring mx-auto flex h-9 w-9 items-center justify-center rounded-full text-sm transition",
                     isSelected
-                      ? "bg-espresso-700 font-semibold text-cream-50 shadow-md shadow-espresso-700/30"
+                      ? "bg-gradient-to-b from-espresso-600 to-espresso-800 font-semibold text-cream-50 shadow-md shadow-espresso-700/30"
                       : isPast
                         ? "cursor-not-allowed text-espresso-500/30"
                         : "text-espresso-700 hover:bg-espresso-100",
