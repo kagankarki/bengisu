@@ -23,12 +23,12 @@ const PIN_HTML = `
   <svg width="32" height="42" viewBox="0 0 32 42" xmlns="http://www.w3.org/2000/svg">
     <defs>
       <linearGradient id="pin-g" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#6f5540"/>
-        <stop offset="100%" stop-color="#3a2b1f"/>
+        <stop offset="0%" style="stop-color: hsl(var(--espresso-600))"/>
+        <stop offset="100%" style="stop-color: hsl(var(--espresso-800))"/>
       </linearGradient>
     </defs>
     <path d="M16 0C7.7 0 1 6.7 1 15c0 10.5 13 25.2 14.1 26.4a1.2 1.2 0 0 0 1.8 0C18 40.2 31 25.5 31 15 31 6.7 24.3 0 16 0Z" fill="url(#pin-g)"/>
-    <circle cx="16" cy="15" r="6" fill="#fbf9f6"/>
+    <circle cx="16" cy="15" r="6" style="fill: hsl(var(--cream-50))"/>
   </svg>
 </div>`;
 
@@ -93,16 +93,22 @@ export default function MapPicker({
         attributionControl: true,
       });
 
-      // Esri "Light Gray Canvas" — ücretsiz, anahtarsız, sade açık gri altlık.
-      // 16'nın üstünde karolar büyütülerek gösterilir (maxNativeZoom).
-      L.tileLayer(
-        "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
-        { maxNativeZoom: 16, maxZoom: 18, attribution: "Tiles &copy; Esri" }
-      ).addTo(map);
-      L.tileLayer(
-        "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
-        { maxNativeZoom: 16, maxZoom: 18 }
-      ).addTo(map);
+      // Esri "Gray Canvas" — ücretsiz, anahtarsız, sade altlık. Siyah temada
+      // koyu, diğerlerinde açık gri. 16'nın üstünde karolar büyütülür.
+      const canvas =
+        document.documentElement.dataset.theme === "siyah"
+          ? "World_Dark_Gray"
+          : "World_Light_Gray";
+      const esri = (layer: string) =>
+        `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/${canvas}_${layer}/MapServer/tile/{z}/{y}/{x}`;
+      L.tileLayer(esri("Base"), {
+        maxNativeZoom: 16,
+        maxZoom: 18,
+        attribution: "Tiles &copy; Esri",
+      }).addTo(map);
+      L.tileLayer(esri("Reference"), { maxNativeZoom: 16, maxZoom: 18 }).addTo(
+        map
+      );
 
       map.on("click", (e: { latlng: { lat: number; lng: number } }) =>
         placeAt(e.latlng.lat, e.latlng.lng)
@@ -228,7 +234,7 @@ export default function MapPicker({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Yer ara (Türkiye)…"
-          className="focus-ring w-full rounded-2xl border border-espresso-200 bg-white/80 px-4 py-3 text-espresso-800 outline-none transition placeholder:text-espresso-500/50"
+          className="focus-ring w-full rounded-2xl border border-espresso-200 bg-surface/80 px-4 py-3 text-espresso-800 outline-none transition placeholder:text-espresso-500/50"
         />
         {searching && (
           <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-espresso-500">

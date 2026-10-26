@@ -2,8 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Theme tokens as HSL channels ("H S% L%"), read as hsl(var(--x) / alpha).
+ * These defaults are the Beyaz (white) theme; lib/themes.ts overrides them
+ * on <html> when a theme is picked.
+ */
 :root {
   color-scheme: light;
+
+  --cream-50: 0 0% 100%;
+  --cream-100: 220 14% 97%;
+  --cream-200: 220 13% 94%;
+
+  --espresso-100: 220 14% 95%;
+  --espresso-200: 220 13% 87%;
+  --espresso-300: 220 10% 74%;
+  --espresso-500: 220 7% 44%;
+  --espresso-600: 220 9% 30%;
+  --espresso-700: 220 12% 18%;
+  --espresso-800: 220 16% 10%;
+
+  --surface: 0 0% 100%;
+  --shade: 220 25% 10%;
+
+  --glow-a: 220 14% 88%;
+  --glow-b: 220 20% 94%;
 }
 
 html,
@@ -17,17 +40,22 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Warm, calm background gradient — Apple-like softness */
+/* Calm background — a soft gradient across the theme's pale tones */
 .app-bg {
   background:
-    radial-gradient(1200px 600px at 50% -10%, #ffffff 0%, rgba(255, 255, 255, 0) 60%),
-    linear-gradient(180deg, #fbf9f6 0%, #f3ede3 100%);
+    radial-gradient(1200px 600px at 50% -10%, hsl(var(--surface) / 0.9) 0%, hsl(var(--surface) / 0) 60%),
+    linear-gradient(
+      165deg,
+      hsl(var(--cream-50)) 0%,
+      hsl(var(--cream-100)) 55%,
+      hsl(var(--cream-200)) 100%
+    );
   /* Don't tile the gradient on long pages — continue with its end colour. */
-  background-color: #f3ede3;
+  background-color: hsl(var(--cream-200));
   background-repeat: no-repeat;
 }
 
-/* Ambient light: soft latte-toned glows drifting very slowly behind content */
+/* Ambient light: soft theme-toned glows drifting very slowly behind content */
 .app-bg::before {
   content: "";
   position: fixed;
@@ -35,10 +63,10 @@ body {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(38% 34% at 18% 22%, rgba(201, 180, 155, 0.32), transparent 70%),
-    radial-gradient(32% 30% at 84% 14%, rgba(255, 255, 255, 0.85), transparent 70%),
-    radial-gradient(42% 40% at 78% 86%, rgba(181, 154, 128, 0.22), transparent 70%),
-    radial-gradient(30% 28% at 12% 88%, rgba(236, 228, 216, 0.7), transparent 70%);
+    radial-gradient(38% 34% at 18% 22%, hsl(var(--glow-a) / 0.36), transparent 70%),
+    radial-gradient(32% 30% at 84% 14%, hsl(var(--surface) / 0.85), transparent 70%),
+    radial-gradient(42% 40% at 78% 86%, hsl(var(--espresso-300) / 0.24), transparent 70%),
+    radial-gradient(30% 28% at 12% 88%, hsl(var(--glow-b) / 0.7), transparent 70%);
   filter: blur(8px);
   animation: ambient-drift 28s ease-in-out infinite alternate;
 }
@@ -69,27 +97,31 @@ body {
 .glass {
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.82) 0%,
-    rgba(255, 255, 255, 0.64) 100%
+    hsl(var(--surface) / 0.82) 0%,
+    hsl(var(--surface) / 0.64) 100%
   );
   backdrop-filter: saturate(180%) blur(22px);
   -webkit-backdrop-filter: saturate(180%) blur(22px);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid hsl(var(--surface) / 0.7);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.95),
-    0 1px 2px rgba(80, 60, 44, 0.04),
-    0 8px 20px -6px rgba(80, 60, 44, 0.08),
-    0 28px 60px -12px rgba(80, 60, 44, 0.16);
+    inset 0 1px 0 rgb(255 255 255 / 0.95),
+    0 1px 2px hsl(var(--shade) / 0.04),
+    0 8px 20px -6px hsl(var(--shade) / 0.08),
+    0 28px 60px -12px hsl(var(--shade) / 0.16);
 }
 
-/* Primary action — warm espresso gradient with a gentle lift */
+/* Primary action — theme-coloured gradient with a gentle lift */
 .btn-primary {
-  color: #fbf9f6;
-  background-image: linear-gradient(180deg, #6f5540 0%, #4a3728 100%);
+  color: hsl(var(--cream-50));
+  background-image: linear-gradient(
+    180deg,
+    hsl(var(--espresso-600)) 0%,
+    hsl(var(--espresso-700)) 100%
+  );
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    0 1px 2px rgba(58, 43, 31, 0.2),
-    0 10px 24px -6px rgba(80, 60, 44, 0.45);
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    0 1px 2px hsl(var(--shade) / 0.2),
+    0 10px 24px -6px hsl(var(--shade) / 0.4);
   transition:
     box-shadow 0.3s ease,
     filter 0.2s ease;
@@ -97,9 +129,9 @@ body {
 .btn-primary:hover {
   filter: brightness(1.07);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    0 1px 2px rgba(58, 43, 31, 0.2),
-    0 16px 34px -8px rgba(80, 60, 44, 0.55);
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    0 1px 2px hsl(var(--shade) / 0.2),
+    0 16px 34px -8px hsl(var(--shade) / 0.5);
 }
 .btn-primary:active {
   filter: brightness(0.97);
@@ -115,8 +147,8 @@ body {
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(80, 60, 44, 0.16) 15%,
-    rgba(80, 60, 44, 0.16) 85%,
+    hsl(var(--espresso-700) / 0.16) 15%,
+    hsl(var(--espresso-700) / 0.16) 85%,
     transparent
   );
 }
@@ -124,7 +156,7 @@ body {
 /* Native-feeling focus ring */
 .focus-ring:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 4px rgba(138, 109, 82, 0.25);
+  box-shadow: 0 0 0 4px hsl(var(--espresso-500) / 0.25);
 }
 
 /* Hide scrollbar but keep scrolling (time-slot picker) */
@@ -139,43 +171,43 @@ body {
 /* ---- Leaflet: match the calm, Apple-like palette ---- */
 .leaflet-container {
   font-family: inherit;
-  background: #eef1f3;
+  background: hsl(var(--cream-100));
 }
 .leaflet-bar {
   border: none !important;
   border-radius: 12px !important;
   overflow: hidden;
-  box-shadow: 0 4px 14px rgba(80, 60, 44, 0.16) !important;
+  box-shadow: 0 4px 14px hsl(var(--shade) / 0.16) !important;
 }
 .leaflet-bar a {
   width: 32px !important;
   height: 32px !important;
   line-height: 32px !important;
-  color: #503c2c !important;
-  background: rgba(255, 255, 255, 0.92) !important;
-  border-bottom: 1px solid rgba(80, 60, 44, 0.08) !important;
+  color: hsl(var(--espresso-700)) !important;
+  background: hsl(var(--surface) / 0.92) !important;
+  border-bottom: 1px solid hsl(var(--espresso-700) / 0.08) !important;
   font-size: 18px;
 }
 .leaflet-bar a:hover {
-  background: #f3ede3 !important;
+  background: hsl(var(--espresso-100)) !important;
 }
 .leaflet-bar a.leaflet-disabled {
-  color: rgba(80, 60, 44, 0.3) !important;
+  color: hsl(var(--espresso-700) / 0.3) !important;
 }
 .leaflet-control-attribution {
-  background: rgba(255, 255, 255, 0.7) !important;
-  color: #8a6d52 !important;
+  background: hsl(var(--surface) / 0.7) !important;
+  color: hsl(var(--espresso-500)) !important;
   font-size: 10px !important;
   border-radius: 8px 0 0 0;
   padding: 1px 6px !important;
 }
 .leaflet-control-attribution a {
-  color: #6f5540 !important;
+  color: hsl(var(--espresso-600)) !important;
 }
 
 /* Map pin: drops in with a soft bounce, sits on a small shadow */
 .pin-drop {
-  filter: drop-shadow(0 6px 8px rgba(58, 43, 31, 0.35));
+  filter: drop-shadow(0 6px 8px hsl(var(--shade) / 0.35));
   transform-origin: 50% 100%;
   animation: pin-drop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
@@ -191,6 +223,29 @@ body {
     transform: translateY(0) scale(1);
     opacity: 1;
   }
+}
+
+/* ---- Siyah (dark) theme: light comes from above, not from white paper ---- */
+:root[data-theme="siyah"] .app-bg::after {
+  mix-blend-mode: screen;
+  opacity: 0.03;
+}
+:root[data-theme="siyah"] .glass {
+  border-color: rgb(255 255 255 / 0.08);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.07),
+    0 28px 60px -12px rgb(0 0 0 / 0.6);
+}
+/* light button on dark: brighter at the top, like the light-theme buttons */
+:root[data-theme="siyah"] .btn-primary {
+  background-image: linear-gradient(
+    180deg,
+    hsl(var(--espresso-800)) 0%,
+    hsl(var(--espresso-700)) 100%
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.6),
+    0 10px 24px -6px rgb(0 0 0 / 0.6);
 }
 
 @media (prefers-reduced-motion: reduce) {

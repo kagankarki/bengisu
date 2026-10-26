@@ -38,8 +38,8 @@ export default function TimePicker({
               className={[
                 "focus-ring shrink-0 snap-center rounded-2xl border px-4 py-2.5 text-sm tabular-nums transition",
                 active
-                  ? "border-espresso-700 bg-gradient-to-b from-espresso-600 to-espresso-800 font-semibold text-cream-50 shadow-md shadow-espresso-700/25"
-                  : "border-espresso-200 bg-white/80 text-espresso-700 hover:border-espresso-500",
+                  ? "border-espresso-700 bg-gradient-to-b from-espresso-600 to-espresso-800 font-semibold text-cream-50 shadow-md shadow-shade/25"
+                  : "border-espresso-200 bg-surface/80 text-espresso-700 hover:border-espresso-500",
               ].join(" ")}
             >
               {slot}

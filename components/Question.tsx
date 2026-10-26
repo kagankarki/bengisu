@@ -127,7 +127,7 @@ export default function Question({ onYes }: { onYes: () => void }) {
             touchAction: "manipulation",
             pointerEvents: noScale <= 0.3 ? "none" : "auto",
           }}
-          className="focus-ring select-none rounded-full border border-white/80 bg-white/60 px-9 py-3.5 text-base font-medium text-espresso-600 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_6px_18px_-6px_rgba(80,60,44,0.18)] backdrop-blur-xl"
+          className="focus-ring select-none rounded-full border border-surface/80 bg-surface/60 px-9 py-3.5 text-base font-medium text-espresso-600 shadow-[inset_0_1px_0_hsl(var(--surface)/0.9),0_6px_18px_-6px_hsl(var(--shade)/0.18)] backdrop-blur-xl"
         >
           Hayır
         </motion.button>

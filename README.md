@@ -1,7 +1,9 @@
 # Merhaba Bengisu ☕️
 
 Bengisu için sade, Apple tarzı, animasyonlu bir davet sayfası.
-Akış: karşılama → soru (Evet / kaçan "Hayır" butonu) → tarih–saat–**harita ile mekan** seçimi → teşekkür.
+Akış: **tema seçimi (Siyah / Beyaz / Pembe)** → karşılama → soru (Evet / kaçan "Hayır" butonu) → tarih–saat–**harita ile mekan** seçimi → teşekkür.
+
+Seçilen tema tüm sayfaya (arka plan, kartlar, butonlar, harita) yumuşak bir geçişle uygulanır; renkler `lib/themes.ts` içinde tanımlıdır.
 
 Teknolojiler: **Next.js (App Router)**, **TypeScript**, **Tailwind CSS**, **Framer Motion**, **Leaflet** (ücretsiz harita, yalnızca Türkiye), **Firebase (Firestore)**.
 

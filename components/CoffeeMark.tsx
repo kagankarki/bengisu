@@ -19,7 +19,7 @@ export default function CoffeeMark({ size = 72 }: { size?: number }) {
       {/* soft warm halo */}
       <span
         aria-hidden
-        className="absolute inset-[-35%] rounded-full bg-[radial-gradient(closest-side,rgba(201,180,155,0.45),rgba(201,180,155,0)_70%)] blur-md"
+        className="absolute inset-[-35%] rounded-full bg-[radial-gradient(closest-side,hsl(var(--glow-a)/0.5),transparent_70%)] blur-md"
       />
       <svg
         width={size}
@@ -27,18 +27,18 @@ export default function CoffeeMark({ size = 72 }: { size?: number }) {
         viewBox="0 0 64 64"
         fill="none"
         aria-hidden="true"
-        className="relative drop-shadow-[0_10px_22px_rgba(80,60,44,0.2)]"
+        className="relative drop-shadow-[0_10px_22px_hsl(var(--shade)/0.2)]"
       >
         <defs>
           <linearGradient id={cupFill} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ffffff" />
-            <stop offset="100%" stopColor="#f3ede3" />
+            <stop offset="0%" style={{ stopColor: "hsl(var(--surface))" }} />
+            <stop offset="100%" style={{ stopColor: "hsl(var(--cream-100))" }} />
           </linearGradient>
         </defs>
         {/* steam */}
         <motion.path
           d="M26 14c2-3-2-5 0-8"
-          stroke="#b39a80"
+          style={{ stroke: "hsl(var(--espresso-300))" }}
           strokeWidth="2.2"
           strokeLinecap="round"
           initial={{ opacity: 0, pathLength: 0 }}
@@ -47,7 +47,7 @@ export default function CoffeeMark({ size = 72 }: { size?: number }) {
         />
         <motion.path
           d="M34 14c2-3-2-5 0-8"
-          stroke="#c9b49b"
+          style={{ stroke: "hsl(var(--espresso-300) / 0.75)" }}
           strokeWidth="2.2"
           strokeLinecap="round"
           initial={{ opacity: 0, pathLength: 0 }}
@@ -58,14 +58,14 @@ export default function CoffeeMark({ size = 72 }: { size?: number }) {
         <path
           d="M14 26h30v10a13 13 0 0 1-13 13h-4A13 13 0 0 1 14 36V26Z"
           fill={`url(#${cupFill})`}
-          stroke="#503c2c"
+          style={{ stroke: "hsl(var(--espresso-700))" }}
           strokeWidth="2.4"
           strokeLinejoin="round"
         />
         {/* coffee surface */}
         <path
           d="M17.5 29.5h23"
-          stroke="#8a6d52"
+          style={{ stroke: "hsl(var(--espresso-500))" }}
           strokeWidth="2.2"
           strokeLinecap="round"
         />
@@ -73,14 +73,14 @@ export default function CoffeeMark({ size = 72 }: { size?: number }) {
         <path
           d="M44 29h4a6 6 0 0 1 0 12h-3"
           fill="none"
-          stroke="#503c2c"
+          style={{ stroke: "hsl(var(--espresso-700))" }}
           strokeWidth="2.4"
           strokeLinecap="round"
         />
         {/* saucer */}
         <path
           d="M12 54h34"
-          stroke="#503c2c"
+          style={{ stroke: "hsl(var(--espresso-700))" }}
           strokeWidth="2.4"
           strokeLinecap="round"
         />

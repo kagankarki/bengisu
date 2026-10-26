@@ -20,18 +20,25 @@ const config: Config = {
         ],
         display: ["var(--font-display)", "Georgia", "serif"],
       },
+      // Theme-driven: values are HSL channels set in globals.css (:root =
+      // coffee) and overridden per colour theme by lib/themes.ts.
       colors: {
         cream: {
-          50: "#fbf9f6",
-          100: "#f5f1ea",
-          200: "#ece4d8",
+          50: "hsl(var(--cream-50) / <alpha-value>)",
+          100: "hsl(var(--cream-100) / <alpha-value>)",
+          200: "hsl(var(--cream-200) / <alpha-value>)",
         },
         espresso: {
-          500: "#8a6d52",
-          600: "#6f5540",
-          700: "#503c2c",
-          800: "#3a2b1f",
+          100: "hsl(var(--espresso-100) / <alpha-value>)",
+          200: "hsl(var(--espresso-200) / <alpha-value>)",
+          300: "hsl(var(--espresso-300) / <alpha-value>)",
+          500: "hsl(var(--espresso-500) / <alpha-value>)",
+          600: "hsl(var(--espresso-600) / <alpha-value>)",
+          700: "hsl(var(--espresso-700) / <alpha-value>)",
+          800: "hsl(var(--espresso-800) / <alpha-value>)",
         },
+        surface: "hsl(var(--surface) / <alpha-value>)",
+        shade: "hsl(var(--shade) / <alpha-value>)",
       },
       keyframes: {
         "fade-up": {

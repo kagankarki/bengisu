@@ -83,7 +83,7 @@ export default function DatePicker({
       <label className="mb-2.5 block text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-espresso-500">
         Tarih
       </label>
-      <div className="rounded-2xl border border-espresso-200 bg-white/80 p-3">
+      <div className="rounded-2xl border border-espresso-200 bg-surface/80 p-3">
         <div className="mb-2 flex items-center justify-between px-1">
           <button
             type="button"
@@ -161,7 +161,7 @@ export default function DatePicker({
                   className={[
                     "focus-ring mx-auto flex h-9 w-9 items-center justify-center rounded-full text-sm transition",
                     isSelected
-                      ? "bg-gradient-to-b from-espresso-600 to-espresso-800 font-semibold text-cream-50 shadow-md shadow-espresso-700/30"
+                      ? "bg-gradient-to-b from-espresso-600 to-espresso-800 font-semibold text-cream-50 shadow-md shadow-shade/30"
                       : isPast
                         ? "cursor-not-allowed text-espresso-500/30"
                         : "text-espresso-700 hover:bg-espresso-100",
