@@ -3,7 +3,7 @@
 Bengisu için sade, Apple tarzı, animasyonlu bir davet sayfası.
 Akış: karşılama → soru (Evet / kaçan "Hayır" butonu) → tarih–saat–**harita ile mekan** seçimi → teşekkür.
 
-Teknolojiler: **Next.js (App Router)**, **TypeScript**, **Tailwind CSS**, **Framer Motion**, **Google Maps** (harita, yalnızca Türkiye), **Firebase (Firestore)**.
+Teknolojiler: **Next.js (App Router)**, **TypeScript**, **Tailwind CSS**, **Framer Motion**, **Leaflet** (ücretsiz harita, yalnızca Türkiye), **Firebase (Firestore)**.
 
 ## Çalıştırma
 
@@ -16,16 +16,14 @@ Ardından tarayıcıda [http://localhost:3000](http://localhost:3000) adresini a
 
 ## Mekan seçimi (harita)
 
-Mekan, **Google Maps** üzerinden seçilir ve harita **yalnızca Türkiye** ile sınırlıdır.
+Mekan harita üzerinden seçilir; harita **yalnızca Türkiye** ile sınırlıdır.
 Açılışta harita **Ankara**'ya ortalanır ve işaretçi otomatik Ankara'ya düşer.
 
 - Arama kutusuna yaz (kafe, restoran, adres — sadece Türkiye) ve seç, **veya**
-- Doğrudan haritaya dokun / işaretçiyi sürükle.
+- Doğrudan haritaya dokun / işaretçiyi sürükle (Türkiye dışı seçilemez).
 
-> **Gerekli:** Google Maps için bir API anahtarı zorunludur. `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`
-> değerini `.env.local` dosyasına (ve Vercel ortam değişkenlerine) ekle. Google Cloud
-> Console'da **Maps JavaScript API**, **Places API** ve **Geocoding API**'yi etkinleştir.
-> Anahtar yoksa harita yerine bir uyarı gösterilir ve mekan varsayılan olarak Ankara olur.
+Harita tamamen **ücretsiz ve anahtarsızdır**: Leaflet + Esri "Light Gray" altlık,
+arama/adres için OpenStreetMap (Nominatim). Hiçbir API anahtarı gerekmez.
 
 Seçilen yerin adı ve koordinatları kaydedilir; teşekkür ekranındaki mekan bağlantısı
 doğrudan **Google Maps**'te açılır.
@@ -57,7 +55,7 @@ components/
   Greeting.tsx      # "Merhaba Bengisu…" karşılama dizisi
   Question.tsx      # kahve sorusu + kaçan "Hayır" (mobil dahil)
   Scheduler.tsx     # tarih / saat / harita ile mekan
-  MapPicker.tsx     # Google Maps (yalnızca Türkiye, açılışta Ankara)
+  MapPicker.tsx     # Leaflet harita (yalnızca Türkiye, açılışta Ankara)
   ThankYou.tsx      # teşekkür + Firebase kaydı + Maps bağlantısı
   CoffeeMark.tsx    # kahve fincanı SVG
 lib/

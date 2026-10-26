@@ -136,26 +136,61 @@ body {
   display: none;
 }
 
-/* ---- Google Maps: match the calm, Apple-like palette ---- */
-.gm-style .gm-style-iw {
+/* ---- Leaflet: match the calm, Apple-like palette ---- */
+.leaflet-container {
   font-family: inherit;
+  background: #eef1f3;
 }
-/* Places arama açılır listesi */
-.pac-container {
-  border-radius: 14px;
-  margin-top: 6px;
-  border: 1px solid rgba(80, 60, 44, 0.12);
-  box-shadow: 0 12px 40px rgba(80, 60, 44, 0.16);
-  font-family: inherit;
+.leaflet-bar {
+  border: none !important;
+  border-radius: 12px !important;
   overflow: hidden;
+  box-shadow: 0 4px 14px rgba(80, 60, 44, 0.16) !important;
 }
-.pac-item {
-  padding: 6px 12px;
-  color: #503c2c;
-  cursor: pointer;
+.leaflet-bar a {
+  width: 32px !important;
+  height: 32px !important;
+  line-height: 32px !important;
+  color: #503c2c !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-bottom: 1px solid rgba(80, 60, 44, 0.08) !important;
+  font-size: 18px;
 }
-.pac-item:hover {
-  background: #f5f1ea;
+.leaflet-bar a:hover {
+  background: #f3ede3 !important;
+}
+.leaflet-bar a.leaflet-disabled {
+  color: rgba(80, 60, 44, 0.3) !important;
+}
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.7) !important;
+  color: #8a6d52 !important;
+  font-size: 10px !important;
+  border-radius: 8px 0 0 0;
+  padding: 1px 6px !important;
+}
+.leaflet-control-attribution a {
+  color: #6f5540 !important;
+}
+
+/* Map pin: drops in with a soft bounce, sits on a small shadow */
+.pin-drop {
+  filter: drop-shadow(0 6px 8px rgba(58, 43, 31, 0.35));
+  transform-origin: 50% 100%;
+  animation: pin-drop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+@keyframes pin-drop {
+  0% {
+    transform: translateY(-36px) scale(0.9);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

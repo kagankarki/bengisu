@@ -1,16 +1,36 @@
 "use client";
 
+import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
-import { Loader } from "@googlemaps/js-api-loader";
+import type { Map as LeafletMap, Marker as LeafletMarker } from "leaflet";
 import type { SelectedPlace } from "@/lib/types";
 
 // Açılışta haritanın ortalanıp işaretçinin düşeceği yer: Ankara.
 const ANKARA = { lat: 39.9334, lng: 32.8597 };
 
-// Haritayı yalnızca Türkiye'ye sınırlayan yaklaşık kutu.
-const TURKEY_BOUNDS = { north: 42.3, south: 35.7, west: 25.6, east: 44.9 };
+// Haritanın dışına çıkılamayan Türkiye kutusu (güney-batı, kuzey-doğu).
+const TURKEY_BOUNDS: [[number, number], [number, number]] = [
+  [35.4, 25.4],
+  [42.4, 45.0],
+];
+// Nominatim aramasında kullanılan kutu: sol, üst, sağ, alt (boylam, enlem).
+const TR_VIEWBOX = "25.4,42.4,45.0,35.4";
 
-const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
+const NOMINATIM = "https://nominatim.openstreetmap.org";
+
+const PIN_HTML = `
+<div class="pin-drop">
+  <svg width="32" height="42" viewBox="0 0 32 42" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="pin-g" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#6f5540"/>
+        <stop offset="100%" stop-color="#3a2b1f"/>
+      </linearGradient>
+    </defs>
+    <path d="M16 0C7.7 0 1 6.7 1 15c0 10.5 13 25.2 14.1 26.4a1.2 1.2 0 0 0 1.8 0C18 40.2 31 25.5 31 15 31 6.7 24.3 0 16 0Z" fill="url(#pin-g)"/>
+    <circle cx="16" cy="15" r="6" fill="#fbf9f6"/>
+  </svg>
+</div>`;
 
 /** Uzun adresi kısa 2 parçalı etikete indirger. */
 function shorten(text: string): string {
@@ -22,130 +42,179 @@ function shorten(text: string): string {
     .join(", ");
 }
 
+interface NominatimResult {
+  lat: string;
+  lon: string;
+  display_name: string;
+}
+
 export default function MapPicker({
   onSelect,
 }: {
   onSelect: (place: SelectedPlace | null) => void;
 }) {
   const mapEl = useRef<HTMLDivElement>(null);
-  const inputEl = useRef<HTMLInputElement>(null);
-  const mapRef = useRef<google.maps.Map | null>(null);
-  const markerRef = useRef<google.maps.Marker | null>(null);
-  const geocoderRef = useRef<google.maps.Geocoder | null>(null);
+  const mapRef = useRef<LeafletMap | null>(null);
+  const markerRef = useRef<LeafletMarker | null>(null);
+  // Türkiye dışına tıklanırsa işaretçiyi geri götürmek için son geçerli seçim.
+  const lastValid = useRef<SelectedPlace>({ name: "Ankara", ...ANKARA });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const LRef = useRef<any>(null);
 
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<NominatimResult[]>([]);
+  const [searching, setSearching] = useState(false);
   const [selectedName, setSelectedName] = useState("Ankara");
-  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
-  // Açılışta varsayılan seçimi Ankara yap (anahtar olsa da olmasa da form çalışsın).
+  // Açılışta varsayılan seçim Ankara — kullanıcı haritaya dokunmasa da form çalışır.
   useEffect(() => {
-    onSelect({ name: "Ankara", lat: ANKARA.lat, lng: ANKARA.lng });
+    onSelect(lastValid.current);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // ---- Leaflet haritası (yalnızca istemcide) ----
   useEffect(() => {
-    if (!API_KEY) {
-      setError("Google Maps API anahtarı eksik.");
-      return;
-    }
-
     let cancelled = false;
-    const loader = new Loader({
-      apiKey: API_KEY,
-      version: "weekly",
-      libraries: ["places"],
-    });
 
-    loader
-      .load()
-      .then((google) => {
-        if (cancelled || !mapEl.current) return;
+    (async () => {
+      const L = (await import("leaflet")).default;
+      if (cancelled || !mapEl.current || mapRef.current) return;
+      LRef.current = L;
 
-        const map = new google.maps.Map(mapEl.current, {
-          center: ANKARA,
-          zoom: 11,
-          restriction: { latLngBounds: TURKEY_BOUNDS, strictBounds: false },
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: false,
-          clickableIcons: false,
-        });
-        mapRef.current = map;
-        geocoderRef.current = new google.maps.Geocoder();
-
-        const marker = new google.maps.Marker({
-          map,
-          position: ANKARA,
-          draggable: true,
-          animation: google.maps.Animation.DROP,
-        });
-        markerRef.current = marker;
-
-        // Açılışta Ankara'nın okunur ismini getir.
-        reverse(ANKARA.lat, ANKARA.lng);
-
-        map.addListener("click", (e: google.maps.MapMouseEvent) => {
-          if (!e.latLng) return;
-          placeAt(e.latLng.lat(), e.latLng.lng());
-        });
-        marker.addListener("dragend", () => {
-          const p = marker.getPosition();
-          if (p) placeAt(p.lat(), p.lng());
-        });
-
-        // Yer arama — yalnızca Türkiye.
-        if (inputEl.current && google.maps.places) {
-          const ac = new google.maps.places.Autocomplete(inputEl.current, {
-            componentRestrictions: { country: "tr" },
-            fields: ["geometry", "name", "formatted_address"],
-          });
-          ac.setBounds(TURKEY_BOUNDS);
-          ac.addListener("place_changed", () => {
-            const pl = ac.getPlace();
-            if (!pl.geometry || !pl.geometry.location) return;
-            const loc = pl.geometry.location;
-            const name = shorten(
-              pl.name || pl.formatted_address || "Seçilen konum"
-            );
-            map.panTo(loc);
-            map.setZoom(15);
-            marker.setPosition(loc);
-            setSelectedName(name);
-            onSelect({ name, lat: loc.lat(), lng: loc.lng() });
-          });
-        }
-      })
-      .catch((err) => {
-        console.error("[MapPicker] Google Maps yüklenemedi:", err);
-        setError("Harita yüklenemedi — API anahtarını kontrol et.");
+      const map = L.map(mapEl.current, {
+        center: [ANKARA.lat, ANKARA.lng],
+        zoom: 11,
+        minZoom: 5,
+        maxZoom: 18,
+        maxBounds: L.latLngBounds(TURKEY_BOUNDS),
+        maxBoundsViscosity: 1.0,
+        zoomControl: true,
+        attributionControl: true,
       });
+
+      // Esri "Light Gray Canvas" — ücretsiz, anahtarsız, sade açık gri altlık.
+      // 16'nın üstünde karolar büyütülerek gösterilir (maxNativeZoom).
+      L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+        { maxNativeZoom: 16, maxZoom: 18, attribution: "Tiles &copy; Esri" }
+      ).addTo(map);
+      L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
+        { maxNativeZoom: 16, maxZoom: 18 }
+      ).addTo(map);
+
+      map.on("click", (e: { latlng: { lat: number; lng: number } }) =>
+        placeAt(e.latlng.lat, e.latlng.lng)
+      );
+
+      mapRef.current = map;
+      // Açılışta pin Ankara'ya düşer.
+      setMarker(ANKARA.lat, ANKARA.lng);
+      // Kart animasyonla açılıyor — yerleşince boyutu yeniden hesapla.
+      setTimeout(() => map.invalidateSize(), 300);
+    })();
 
     return () => {
       cancelled = true;
+      mapRef.current?.remove();
+      mapRef.current = null;
+      markerRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const placeAt = (lat: number, lng: number) => {
-    markerRef.current?.setPosition({ lat, lng });
-    mapRef.current?.panTo({ lat, lng });
-    reverse(lat, lng);
+  const setMarker = (lat: number, lng: number) => {
+    const L = LRef.current;
+    const map = mapRef.current;
+    if (!L || !map) return;
+
+    if (markerRef.current) {
+      markerRef.current.setLatLng([lat, lng]);
+      return;
+    }
+    const icon = L.divIcon({
+      html: PIN_HTML,
+      className: "",
+      iconSize: [32, 42],
+      iconAnchor: [16, 40],
+    });
+    const marker = L.marker([lat, lng], { icon, draggable: true }).addTo(map);
+    marker.on("dragend", () => {
+      const p = marker.getLatLng();
+      placeAt(p.lat, p.lng);
+    });
+    markerRef.current = marker;
   };
 
-  const reverse = (lat: number, lng: number) => {
-    const fallback = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-    setSelectedName(fallback);
-    onSelect({ name: fallback, lat, lng });
-    geocoderRef.current?.geocode(
-      { location: { lat, lng } },
-      (results, status) => {
-        if (status === "OK" && results && results[0]) {
-          const name = shorten(results[0].formatted_address);
-          setSelectedName(name);
-          onSelect({ name, lat, lng });
-        }
-      }
-    );
+  const select = (place: SelectedPlace) => {
+    lastValid.current = place;
+    setSelectedName(place.name);
+    setNotice(null);
+    onSelect(place);
   };
+
+  const placeAt = async (lat: number, lng: number) => {
+    setMarker(lat, lng);
+    mapRef.current?.panTo([lat, lng]);
+
+    try {
+      const res = await fetch(
+        `${NOMINATIM}/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=tr&zoom=18`
+      );
+      const data = await res.json();
+      const country = data?.address?.country_code;
+      if (country && country !== "tr") {
+        // Türkiye dışı: seçimi geri al.
+        const prev = lastValid.current;
+        setMarker(prev.lat, prev.lng);
+        mapRef.current?.panTo([prev.lat, prev.lng]);
+        setNotice("Sadece Türkiye içinden seçebilirsin.");
+        return;
+      }
+      const name = data?.display_name
+        ? shorten(data.display_name)
+        : `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+      select({ name, lat, lng });
+    } catch {
+      select({ name: `${lat.toFixed(5)}, ${lng.toFixed(5)}`, lat, lng });
+    }
+  };
+
+  const choose = (r: NominatimResult) => {
+    const lat = parseFloat(r.lat);
+    const lng = parseFloat(r.lon);
+    setResults([]);
+    setQuery("");
+    mapRef.current?.setView([lat, lng], 15);
+    setMarker(lat, lng);
+    select({ name: shorten(r.display_name), lat, lng });
+  };
+
+  // ---- Gecikmeli yer arama — yalnızca Türkiye ----
+  useEffect(() => {
+    if (query.trim().length < 3) {
+      setResults([]);
+      return;
+    }
+    const t = setTimeout(async () => {
+      setSearching(true);
+      try {
+        const res = await fetch(
+          `${NOMINATIM}/search?format=jsonv2&q=${encodeURIComponent(
+            query
+          )}&limit=5&accept-language=tr&countrycodes=tr&viewbox=${TR_VIEWBOX}&bounded=1`
+        );
+        const data = await res.json();
+        setResults(Array.isArray(data) ? data.slice(0, 5) : []);
+      } catch {
+        setResults([]);
+      } finally {
+        setSearching(false);
+      }
+    }, 450);
+    return () => clearTimeout(t);
+  }, [query]);
 
   return (
     <div>
@@ -153,32 +222,47 @@ export default function MapPicker({
         Mekan
       </label>
 
-      {!error && (
+      <div className="relative">
         <input
-          ref={inputEl}
           type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
           placeholder="Yer ara (Türkiye)…"
-          className="focus-ring mb-3 w-full rounded-2xl border border-espresso-200 bg-white/80 px-4 py-3 text-espresso-800 outline-none transition placeholder:text-espresso-500/50"
+          className="focus-ring w-full rounded-2xl border border-espresso-200 bg-white/80 px-4 py-3 text-espresso-800 outline-none transition placeholder:text-espresso-500/50"
         />
-      )}
+        {searching && (
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-espresso-500">
+            aranıyor…
+          </span>
+        )}
 
-      {error ? (
-        <div className="rounded-2xl border border-espresso-200 bg-white/70 px-4 py-6 text-center text-sm text-espresso-500">
-          ⚠️ {error}
-          <br />
-          Varsayılan olarak <span className="font-semibold">Ankara</span> seçildi.
-        </div>
-      ) : (
-        <div
-          ref={mapEl}
-          className="h-64 w-full overflow-hidden rounded-2xl border border-espresso-200 shadow-inner"
-          role="application"
-          aria-label="Konum seçme haritası (Türkiye)"
-        />
-      )}
+        {results.length > 0 && (
+          <ul className="glass absolute left-0 right-0 top-[calc(100%+6px)] z-[1200] max-h-56 overflow-auto rounded-2xl p-1.5">
+            {results.map((r, i) => (
+              <li key={`${r.lat}-${r.lon}-${i}`}>
+                <button
+                  type="button"
+                  onClick={() => choose(r)}
+                  className="focus-ring block w-full truncate rounded-xl px-3 py-2 text-left text-sm text-espresso-700 hover:bg-cream-100"
+                  title={r.display_name}
+                >
+                  {shorten(r.display_name)}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div
+        ref={mapEl}
+        className="mt-3 h-64 w-full overflow-hidden rounded-2xl border border-espresso-200 shadow-inner"
+        role="application"
+        aria-label="Konum seçme haritası (Türkiye)"
+      />
 
       <p className="mt-2 text-xs text-espresso-500">
-        Haritaya dokunarak ya da işaretçiyi sürükleyerek seç — yalnızca Türkiye.
+        {notice ?? "Haritaya dokunarak ya da işaretçiyi sürükleyerek seç — yalnızca Türkiye."}
       </p>
 
       {selectedName && (
